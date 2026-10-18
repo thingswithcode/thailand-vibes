@@ -1,0 +1,38 @@
+---
+import { t } from '../i18n';
+import type { Lang } from '../i18n/types';
+import type { FilterOption } from '../lib/categories';
+
+interface Props {
+  lang: Lang;
+  options: FilterOption[];
+  total: number;
+}
+
+const { lang, options, total } = Astro.props;
+const d = t(lang);
+---
+<div class="chips" role="group" aria-label={d.filter.label}>
+  <button type="button" class="chip" data-filter-chip data-category="all" aria-pressed="true">{d.filter.all}{' '}<small>{total}</small></button>
+  {options.map((option) => (
+    <button type="button" class="chip" data-filter-chip data-category={option.key} aria-pressed="false">{option.label}{' '}<small>{option.count}</small></button>
+  ))}
+</div>
+
+<script>
+  import { initFilters } from '../scripts/filter';
+  initFilters();
+</script>
+
+<style>
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0; }
+  .chip { border: 1px solid rgb(42 33 27 / 0.2); border-radius: 99px; padding: 7px 15px; font: inherit; font-size: clamp(13px, 0.9vw, 15px); line-height: 1.3; cursor: pointer; background: transparent; color: inherit; }
+  .chip small { opacity: 0.7; font-size: 0.85em; }
+  .chip[aria-pressed='true'] { background: var(--red); border-color: var(--red); color: var(--bg); }
+  .chip[aria-pressed='true'] small { opacity: 0.85; }
+  @media (max-width: 900px) {
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--pad)); padding: 12px var(--pad); }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { flex: none; }
+  }
+</style>

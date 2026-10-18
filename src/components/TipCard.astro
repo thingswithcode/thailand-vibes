@@ -1,0 +1,108 @@
+---
+import { Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import { t } from '../i18n';
+import type { Lang } from '../i18n/types';
+import type { Localized } from '../lib/content';
+import { pathFor } from '../lib/urls';
+
+interface Props {
+  lang: Lang;
+  tip: Localized<'tips'>;
+}
+
+const { lang, tip } = Astro.props;
+const d = t(lang);
+const data = tip.entry.data;
+const { Content } = await render(tip.entry);
+const photos = data.photos;
+const leadTall = photos.length > 0 && photos[0].src.height > photos[0].src.width;
+---
+<article
+  class:list={['tip', { 'has-photos': photos.length > 0 }]}
+  id={`tip-${tip.slug}`}
+  data-filter-item
+  data-category={data.category}
+  data-active-id={tip.slug}
+>
+  {data.number && <div class="num" aria-hidden="true">{data.number}</div>}
+  <div class="main">
+    <p class="label">{d.category[data.category]}{data.pinNote && <span class="pin-note">{` ${data.pinNote}`}</span>}</p>
+    <h3>{data.title}</h3>
+    <div class="text"><Content /></div>
+    {data.facts.length > 0 && (
+      <dl class="facts">
+        {data.facts.map((fact) => (
+          <Fragment><dt>{fact.label}</dt><dd>{fact.value}</dd></Fragment>
+        ))}
+      </dl>
+    )}
+    {data.more && (
+      <div class="more"><b>{data.more.title}</b><p>{data.more.text}</p></div>
+    )}
+    {data.skip && (
+      <div class="skip-note"><b>{d.place.iWouldSkip}</b><p>{data.skip}</p></div>
+    )}
+    {(data.maps.length > 0 || data.link) && (
+      <div class="actions">
+        {data.maps.map((m) => (
+          <a class="btn" href={m.url} target="_blank" rel="noopener">{m.label ? d.place.openNamedInMaps(m.label) : d.place.openInMaps}</a>
+        ))}
+        {data.link && <a class="btn btn-ghost" href={pathFor(lang, data.link.href)}>{data.link.label}</a>}
+      </div>
+    )}
+  </div>
+  {photos.length > 0 && (
+    <div class:list={['photos', { 'lead-tall': leadTall }]}>
+      {photos.map((photo) => (
+        <figure>
+          <Picture
+            src={photo.src}
+            alt={photo.alt}
+            formats={['avif', 'webp']}
+            widths={[400, 700, 1000]}
+            sizes="(max-width: 900px) 45vw, 22vw"
+            style={photo.position ? `object-position: ${photo.position}` : undefined}
+          />
+          {photo.credit && (
+            <figcaption>
+              {`${d.photo.label}: `}<a href={photo.credit.source}>{photo.credit.author}</a>{', '}
+              {photo.credit.licenseUrl ? <a href={photo.credit.licenseUrl}>{photo.credit.license}</a> : photo.credit.license}
+            </figcaption>
+          )}
+        </figure>
+      ))}
+    </div>
+  )}
+</article>
+
+<style>
+  .tip { background: var(--card); border-radius: var(--radius); padding: clamp(20px, 2.2vw, 40px); margin-bottom: 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(14px, 1.6vw, 28px); transition: box-shadow 0.3s; scroll-margin-top: 90px; }
+  .tip.has-photos { grid-template-columns: auto minmax(0, 1fr) minmax(0, 0.9fr); }
+  .num { font-family: var(--serif); font-weight: 300; font-size: clamp(44px, 4vw, 76px); line-height: 0.9; color: var(--red); }
+  .label { margin: 0; }
+  .pin-note { color: var(--muted); margin-left: 6px; letter-spacing: 0.08em; }
+  h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 2.3vw, 44px); line-height: 1.05; margin: 8px 0 12px; letter-spacing: -0.01em; }
+  .text { font-size: clamp(14px, 1.02vw, 17px); line-height: 1.65; }
+  .text :global(p) { margin: 0 0 16px; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: clamp(13px, 0.95vw, 15px); margin: 0 0 18px; }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; }
+  .more { border-top: 1px solid var(--line); padding-top: 14px; margin-bottom: 18px; font-size: clamp(13px, 0.95vw, 15px); }
+  .more b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.1em; margin-bottom: 4px; }
+  .more p, .skip-note p { margin: 0; }
+  .skip-note { background: var(--ink); color: var(--bg); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; font-size: clamp(13px, 0.95vw, 15px); }
+  .skip-note b { color: var(--skip); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.8em; display: block; margin-bottom: 4px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .photos { display: grid; gap: 10px; align-content: start; }
+  figure { margin: 0; }
+  .photos :global(img) { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; }
+  .photos.lead-tall figure:first-child :global(img) { aspect-ratio: 4 / 5; }
+  figcaption { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  @media (max-width: 900px) {
+    .tip, .tip.has-photos { grid-template-columns: 1fr; }
+    .photos { grid-template-columns: 1fr 1fr; }
+    .photos.lead-tall figure:first-child :global(img) { aspect-ratio: 4 / 3; }
+    .num { font-size: 40px; }
+  }
+</style>
