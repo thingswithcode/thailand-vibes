@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup Bangkok | Thailand Vibes</title>
+<!-- Abgestimmter Entwurf (Look A, Magazin), Stand 08.10.2026. Fotos werden hier direkt von Wix geladen. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+  html, body { margin: 0; background: #F2EBDD; }
+  .v { --bg:#F2EBDD; --ink:#2A211B; --red:#A63A2B; --card:#FBF7EF; --muted:#8a7b6c; --sand:#E7DCC8;
+       --pad: clamp(18px, 4vw, 64px);
+       background: var(--bg); color: var(--ink); font-family: Inter, sans-serif; overflow: clip; }
+  .v img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .w { max-width: 1480px; margin: 0 auto; padding: 0 var(--pad); }
+  .lab { font-size: clamp(11px, .8vw, 13px); letter-spacing: .16em; text-transform: uppercase; color: var(--red); font-weight: 600; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: clamp(14px, 1.6vw, 26px) 0; font-size: clamp(13px, .95vw, 16px); }
+  .logo { font-family: Fraunces, serif; font-style: italic; font-size: clamp(20px, 1.6vw, 28px); }
+  .links { display: flex; gap: clamp(16px, 2vw, 36px); }
+  .links .cur { color: var(--red); }
+  .right { display: flex; align-items: center; gap: 14px; }
+  .lang { border: 1px solid var(--ink); border-radius: 99px; padding: 4px 12px; font-size: .85em; }
+  .lang b { color: var(--red); }
+  .menubtn { display: none; font-size: 22px; line-height: 1; cursor: pointer; }
+
+  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(20px, 4vw, 80px); align-items: end; padding: clamp(16px, 3vw, 60px) 0 clamp(36px, 5vw, 90px); }
+  .crumb { font-size: clamp(13px, .9vw, 15px); color: var(--muted); margin-bottom: 14px; }
+  .h1 { font-family: Fraunces, serif; font-weight: 300; font-size: clamp(72px, 12vw, 230px); line-height: .85; letter-spacing: -.04em; margin: 10px 0 clamp(20px, 2.4vw, 40px); }
+  .intro { font-size: clamp(16px, 1.3vw, 22px); line-height: 1.55; max-width: 34ch; margin: 0; font-family: Fraunces, serif; font-weight: 300; }
+  .hero .arch { border-radius: 999px 999px 12px 12px; overflow: hidden; aspect-ratio: 4 / 5; }
+
+  .bar { position: sticky; top: 0; z-index: 500; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-top: 1px solid #2A211B22; border-bottom: 1px solid #2A211B22; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 0; }
+  .chip { border: 1px solid #2A211B33; border-radius: 99px; padding: 7px 15px; font-size: clamp(13px, .9vw, 15px); cursor: pointer; background: transparent; color: inherit; font-family: inherit; }
+  .chip small { opacity: .6; margin-left: 4px; }
+  .chip.on { background: var(--red); border-color: var(--red); color: var(--bg); }
+
+  .body { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(20px, 3vw, 56px); padding: clamp(24px, 3vw, 50px) 0 clamp(40px, 6vw, 110px); }
+  .mapwrap { position: sticky; top: 76px; align-self: start; height: calc(100vh - 100px); max-height: 860px; border-radius: 18px; overflow: hidden; }
+  #bkkmap { width: 100%; height: 100%; background: var(--sand); }
+  #bkkmap canvas { filter: sepia(.38) saturate(.85) brightness(1.02); }
+  .pinicon span { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--bg); border: 2px solid var(--red); color: var(--red); font: 600 13px Inter, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,.2); transition: all .25s; }
+  .pinicon.on span { background: var(--red); color: var(--bg); transform: scale(1.25); }
+
+  #tips { scroll-margin-top: 90px; }
+  .tip { background: var(--card); border-radius: 18px; padding: clamp(20px, 2.2vw, 40px); margin-bottom: 18px; display: grid; grid-template-columns: auto 1fr; gap: clamp(14px, 1.6vw, 28px); transition: box-shadow .3s; scroll-margin-top: 90px; }
+  .tip.on { box-shadow: 0 0 0 2px var(--red); }
+  .tip.has-pics { grid-template-columns: auto 1fr 0.9fr; }
+  .num { font-family: Fraunces, serif; font-weight: 300; font-size: clamp(44px, 4vw, 76px); line-height: .9; color: var(--red); }
+  .tip h3 { font-family: Fraunces, serif; font-weight: 400; font-size: clamp(26px, 2.3vw, 44px); line-height: 1.05; margin: 8px 0 12px; letter-spacing: -.01em; }
+  .tip p { font-size: clamp(14px, 1.02vw, 17px); line-height: 1.65; margin: 0 0 16px; }
+  .meta { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: clamp(13px, .95vw, 15px); margin: 0 0 18px; }
+  .meta dt { color: var(--muted); }
+  .meta dd { margin: 0; }
+  .more { border-top: 1px solid #2A211B1a; padding-top: 14px; margin-bottom: 18px; font-size: clamp(13px, .95vw, 15px); line-height: 1.6; }
+  .more b { display: block; font-family: Fraunces, serif; font-weight: 600; font-size: 1.1em; margin-bottom: 4px; }
+  .skipnote { background: var(--ink); color: var(--bg); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; font-size: clamp(13px, .95vw, 15px); line-height: 1.55; }
+  .skipnote b { color: #E08A6E; text-transform: uppercase; letter-spacing: .12em; font-size: .8em; display: block; margin-bottom: 4px; }
+  .btn { display: inline-block; background: var(--ink); color: var(--bg); border-radius: 99px; padding: 10px 18px; font-size: clamp(13px, .9vw, 15px); text-decoration: none; }
+  .pics { display: grid; gap: 10px; align-content: start; }
+  .pics div { border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 3; }
+  .pics.two div:first-child { aspect-ratio: 4 / 5; }
+  .nopin { font-size: 12px; color: var(--muted); margin-left: 10px; }
+
+  @media (max-width: 900px) {
+    .menubtn { display: block; }
+    .links { display: none; }
+    .hero, .body { grid-template-columns: 1fr; }
+    .hero .arch { aspect-ratio: 1 / 1; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--pad)); padding: 12px var(--pad); }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip { flex: none; }
+    .mapwrap { position: relative; top: 0; height: 340px; order: -1; }
+    .tip, .tip.has-pics { grid-template-columns: 1fr; }
+    .pics { grid-template-columns: 1fr 1fr; }
+    .pics.two div:first-child { aspect-ratio: 4 / 3; }
+    .num { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="v">
+  <div class="w">
+    <div class="nav">
+      <div class="logo">Thailand Vibes</div>
+      <div class="links"><span class="cur">Destinations</span><span>All over Thailand</span><span>Before you come</span><span>About</span></div>
+      <div class="right"><div class="lang"><b>EN</b> / DE</div><span class="menubtn" aria-label="Menu">&#9776;</span></div>
+    </div>
+    <div class="hero">
+      <div>
+        <div class="crumb">Destinations / The capital</div>
+        <div class="lab">11 tips · where we lived</div>
+        <div class="h1">Bangkok</div>
+        <p class="intro">This is the place we spent most of our time since we moved here. So there's lots of recommendations, from temples, markets and rooftops to nightlife, plus things we wouldn't recommend.</p>
+      </div>
+      <div class="arch"><img style="object-position: 55% 50%" src="https://static.wixstatic.com/media/516253_15dad8d3e17d4ce1a900a836db613c17~mv2.jpg/v1/fill/w_1000,h_1250,al_c,q_85/a.jpg" alt="Wat Paknam with the big Buddha"></div>
+    </div>
+  </div>
+
+  <div class="bar"><div class="w"><div class="chips" id="chips">
+    <button class="chip on" data-f="all">All<small>11</small></button>
+    <button class="chip" data-f="temples">Temples<small>1</small></button>
+    <button class="chip" data-f="markets">Markets<small>1</small></button>
+    <button class="chip" data-f="rooftops">Rooftops<small>1</small></button>
+    <button class="chip" data-f="food">Food<small>2</small></button>
+    <button class="chip" data-f="shopping">Shopping<small>1</small></button>
+    <button class="chip" data-f="nightlife">Nightlife<small>2</small></button>
+    <button class="chip" data-f="wellness">Wellness<small>1</small></button>
+    <button class="chip" data-f="nature">Nature<small>1</small></button>
+    <button class="chip" data-f="getting-around">Getting around<small>1</small></button>
+  </div></div></div>
+
+  <div class="w">
+    <div class="body">
+      <div id="tips">
+        <article class="tip has-pics" data-cat="temples" data-id="1" data-ll="13.7215,100.4696">
+          <div class="num">01</div>
+          <div>
+            <div class="lab">Temple</div>
+            <h3>Wat Paknam Phasi Charoen</h3>
+            <p>You honestly can't leave Thailand without visiting at least one temple, so here's my favorite. Less touristy than the Grand Palace, absolutely stunning, and nobody bothers you. Step inside the white stupa and climb its five levels to the emerald statues on the top floor.</p>
+            <dl class="meta"><dt>Open</dt><dd>Daily 6am to 8pm</dd><dt>Entry</dt><dd>Free</dd><dt>Wear</dt><dd>Shoulders and knees covered, shoes off at the sign</dd></dl>
+            <div class="more"><b>Another nice temple</b>Wat Arun, where you can get dressed in a traditional Thai outfit and get your photos taken.</div>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+          <div class="pics two">
+            <div><img src="https://static.wixstatic.com/media/516253_21aa8a76234b441f9a9770fbf6efe2bd~mv2.png/v1/fill/w_700,h_875,al_c,q_85/a.jpg" alt=""></div>
+            <div><img style="object-position: 50% 25%" src="https://static.wixstatic.com/media/516253_9636ac7001814290a2f09ccc0dc4d351~mv2.jpg/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+          </div>
+        </article>
+
+        <article class="tip" data-cat="markets" data-id="2" data-ll="13.7577,100.5660">
+          <div class="num">02</div>
+          <div>
+            <div class="lab">Market</div>
+            <h3>Jodd Fairs</h3>
+            <p>Markets are one of my favorite things about Thailand. Jodd Fairs is not too big and not too small, with food, drinks, clothing and jewelry. It's 'farang' friendly, there's usually live music, so grab a Singha and watch as people go by.</p>
+            <dl class="meta"><dt>Open</dt><dd>Daily 5pm to 12am</dd><dt>Try</dt><dd>Mango sticky rice, Pad Krapao Moo with a kai dao</dd></dl>
+            <div class="more"><b>More markets</b>Chatuchak, the huge weekend market (Sat and Sun 6am to 6pm), and the Train Night Market DanNeramit with its Disney-like castle (Thu to Sun 5pm to 12am).</div>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+        </article>
+
+        <article class="tip" data-cat="rooftops" data-id="3" data-ll="13.7181,100.5853">
+          <div class="num">03</div>
+          <div>
+            <div class="lab">Rooftop</div>
+            <h3>Tichuca</h3>
+            <p>Forget the rooftop from The Hangover and visit this gem instead. Great vibes, good music, right in the centre of Sukhumvit. Go for sunset. Cocktails are a little pricey for Thailand, but the view is totally worth it.</p>
+            <dl class="meta"><dt>Open</dt><dd>Sun to Thu 5pm to 12am, Fri and Sat until 1:30am</dd><dt>After</dt><dd>Club 'Chupa' in the same building</dd></dl>
+            <div class="more"><b>More rooftops</b>Octave right across, with a live DJ. Vertigo at Banyan Tree on the 61st floor. Pastel for party vibes, free shots and dancing until 1am.</div>
+            <div class="skipnote"><b>I would skip</b>Sky Bar at Lebua: the view is not that amazing, it's pretty dead and the drinks are outrageously expensive.</div>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+        </article>
+
+        <article class="tip has-pics" data-cat="getting-around" data-id="4">
+          <div class="num">04</div>
+          <div>
+            <div class="lab">Getting around <span class="nopin">no fixed spot</span></div>
+            <h3>Hop on a TukTuk</h3>
+            <p>Kind of obvious, but too fun to miss. Take one after sunset, from the rooftop to dinner or Khao San Road. Bargain a little. Enjoy driving through skyscrapers at crazy speed with blasting loud speakers.</p>
+          </div>
+          <div class="pics">
+            <div><img src="https://static.wixstatic.com/media/516253_1de3482ca02546798e5eccb8e818e82e~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+            <div><img src="https://static.wixstatic.com/media/516253_2e1378d38ee5438a967263535fd0747b~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+          </div>
+        </article>
+
+        <article class="tip has-pics" data-cat="food" data-id="5" data-ll="13.7406,100.5098">
+          <div class="num">05</div>
+          <div>
+            <div class="lab">Food</div>
+            <h3>Chinatown after sunset</h3>
+            <p>One of the largest Chinatowns in the world. The bustling vibes with tons of really great street food are incomparable. Search for Yaowarat Road.</p>
+            <dl class="meta"><dt>Open</dt><dd>All the time, best after sunset</dd></dl>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+          <div class="pics">
+            <div><img src="https://static.wixstatic.com/media/516253_0347237fe27b4f82b9d86a5dc753581e~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+            <div><img src="https://static.wixstatic.com/media/516253_23e4b08a4c8146d0a9910fa0278a02a4~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+          </div>
+        </article>
+
+        <article class="tip" data-cat="shopping" data-id="6" data-ll="13.7266,100.5103">
+          <div class="num">06</div>
+          <div>
+            <div class="lab">Shopping</div>
+            <h3>IconSiam</h3>
+            <p>Probably my favorite mall. Take the boat from Oriental Pier or Sathon Pier, it makes the visit even more special. Inside there's a waterfall, a small floating market, a Starbucks with river views and a fountain show at 7, 8 and 9pm.</p>
+            <dl class="meta"><dt>Open</dt><dd>Daily 10am to 10pm</dd><dt>Tip</dt><dd>Fill your suitcase with dried mango, not overpriced brands</dd></dl>
+            <div class="more"><b>Other malls</b>Platinum Mall for bargains, MBK for fakes, Central World, Emquartier and Emsphere with the TRIBE rooftop beach club, Siam Paragon and then Siam Square.</div>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+        </article>
+
+        <article class="tip" data-cat="wellness" data-id="7">
+          <div class="num">07</div>
+          <div>
+            <div class="lab">Wellness <span class="nopin">several locations</span></div>
+            <h3>Get a massage</h3>
+            <p>Who goes to Thailand and does not get a massage? My two favorites are Infinity Spa and Divana. A 60 min aroma massage at Infinity is about 1,300 Baht, with refreshments before and mango sticky rice after. Regular salons are 10 to 20 dollars an hour.</p>
+            <dl class="meta"><dt>Infinity</dt><dd>Daily 9:30am to 9:30pm</dd><dt>Divana</dt><dd>Daily 10am to 11pm</dd></dl>
+            <div class="more"><b>My tip</b>I personally don't enjoy Thai massage, it feels like stretching for lazy people. I usually go for a full body oil massage or a foot massage, and check the Google Maps reviews.</div>
+          </div>
+        </article>
+
+        <article class="tip" data-cat="food" data-id="8">
+          <div class="num">08</div>
+          <div>
+            <div class="lab">Food <span class="nopin">all over the city</span></div>
+            <h3>Try local (street) food</h3>
+            <p>When I first came here I was so worried about food poisoning that I basically had fried rice all day. Don't make that mistake. Try Gai Pad Med Mamuang (Mike's favourite, not spicy), Pad Krapao Moo, fried seabass in a salt crust and Pad See Ew.</p>
+            <div class="more"><b>My favourite Thai restaurants</b>The Local, Shamballa Somtam in Ari, Taling Pling Sukhumvit 34, NAAM 1608 on the river, Nhong Rim Klong for seafood, Supanniga Eating Room with a view on Wat Arun, Mae Varee for mango sticky rice.</div>
+          </div>
+        </article>
+
+        <article class="tip has-pics" data-cat="nightlife" data-id="9" data-ll="13.7590,100.4974">
+          <div class="num">09</div>
+          <div>
+            <div class="lab">Nightlife</div>
+            <h3>Party at Khao San Road</h3>
+            <p>The party street for backpackers, definitely an experience. Blasting music from every bar, roasted scorpions, and buckets full of cocktails at every corner. They're strong as hell, so I'd switch to beer after the first one.</p>
+            <dl class="meta"><dt>Bars</dt><dd>The ONE at Khao San, then 'the Club'. For chill vibes: The Macaroni Club</dd></dl>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+          <div class="pics">
+            <div><img src="https://static.wixstatic.com/media/516253_4d2f2106d56243259385ee48d193f53e~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+            <div><img src="https://static.wixstatic.com/media/516253_9ef6a6b23e0a471e86d311ab990440de~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+          </div>
+        </article>
+
+        <article class="tip" data-cat="nightlife" data-id="10" data-ll="13.7375,100.5630">
+          <div class="num">10</div>
+          <div>
+            <div class="lab">Nightlife</div>
+            <h3>Soi Cowboy</h3>
+            <p>Sukhumvit between Nana and Phrom Phong after sunset is a whole different vibe. People watching and strolling through Soi Cowboy, also known from The Hangover, is extremely interesting. I wouldn't spend too much time though.</p>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+        </article>
+
+        <article class="tip has-pics" data-cat="nature" data-id="11" data-ll="13.6840,100.5600">
+          <div class="num">10+1</div>
+          <div>
+            <div class="lab">Nature</div>
+            <h3>Recharge on Bang Kachao</h3>
+            <p>A green island right in the heart of Bangkok. Rent a bike, ride through the lanes, stroll by the water, have lunch and very good coffee. One of my favorite places to get away from the hustle and bustle.</p>
+            <dl class="meta"><dt>Getting there</dt><dd>Taxi to Wat Khlong Toei Nok Pier, boat across (ask for the small 20 Baht boat)</dd><dt>Eat</dt><dd>Hidden Woods, Coconut Lane</dd></dl>
+            <a class="btn">Open in Google Maps ↗</a>
+          </div>
+          <div class="pics two">
+            <div><img src="https://static.wixstatic.com/media/516253_04b5334fe76c4dce9ec2fed1cc089950~mv2.png/v1/fill/w_700,h_875,al_c,q_85/a.jpg" alt=""></div>
+            <div><img src="https://static.wixstatic.com/media/516253_19234ce0b9a94c7fb3a6d52f6bbf9b25~mv2.png/v1/fill/w_700,h_525,al_c,q_85/a.jpg" alt=""></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="mapwrap"><div id="bkkmap"></div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(function () {
+  const tips = [...document.querySelectorAll('.tip')];
+  const map = new maplibregl.Map({
+    container: 'bkkmap',
+    style: 'https://tiles.openfreemap.org/styles/positron',
+    center: [100.53, 13.73], zoom: 11,
+    attributionControl: { compact: true }
+  });
+  map.scrollZoom.disable();
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
+  map.on('load', () => {
+    // Beschriftung nur in der Seitensprache (hier Englisch), sonst steht Thai daneben.
+    map.getStyle().layers.forEach(l => {
+      if (l.layout && l.layout['text-field']) {
+        map.setLayoutProperty(l.id, 'text-field', ['coalesce', ['get', 'name:en'], ['get', 'name_en'], ['get', 'name']]);
+      }
+    });
+  });
+
+  const markers = {};
+  tips.forEach(t => {
+    if (!t.dataset.ll) return;
+    const [lat, lng] = t.dataset.ll.split(',').map(Number);
+    const el = document.createElement('div');
+    el.className = 'pinicon';
+    el.innerHTML = '<span>' + t.querySelector('.num').textContent.replace(/^0/, '') + '</span>';
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => t.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    markers[t.dataset.id] = { m: new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map), el, ll: [lng, lat] };
+  });
+  function fit(animate) {
+    const vis = tips.filter(t => t.style.display !== 'none' && markers[t.dataset.id]).map(t => markers[t.dataset.id]);
+    if (!vis.length) return;
+    const b = new maplibregl.LngLatBounds();
+    vis.forEach(x => b.extend(x.ll));
+    map.fitBounds(b, { padding: window.innerWidth < 600 ? 36 : 70, maxZoom: 13.5, duration: animate ? 700 : 0 });
+  }
+  map.on('load', () => { map.resize(); fit(false); });
+
+  function setActive(id) {
+    tips.forEach(t => t.classList.toggle('on', t.dataset.id === id));
+    Object.entries(markers).forEach(([k, x]) => x.el.classList.toggle('on', k === id));
+  }
+  function update() {
+    const target = window.innerHeight * 0.45;
+    let best = null, bestD = Infinity;
+    tips.forEach(el => { if (el.style.display === 'none') return; const r = el.getBoundingClientRect(); const d = Math.abs((r.top + r.bottom) / 2 - target); if (d < bestD) { bestD = d; best = el; } });
+    if (best) setActive(best.dataset.id);
+  }
+  document.addEventListener('scroll', update, { passive: true, capture: true });
+
+  document.getElementById('chips').addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return;
+    document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+    const f = c.dataset.f;
+    tips.forEach(t => {
+      const show = f === 'all' || t.dataset.cat === f;
+      t.style.display = show ? '' : 'none';
+      const x = markers[t.dataset.id];
+      if (x) { if (show) x.m.addTo(map); else x.m.remove(); }
+    });
+    fit(true); document.getElementById('tips').scrollIntoView({ block: 'start' }); update();
+  });
+  update();
+})();
+</script>
+</body>
+</html>
