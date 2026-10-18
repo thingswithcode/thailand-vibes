@@ -1,0 +1,32 @@
+---
+import type { Lang } from '../i18n/types';
+import { t } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  switchHref: string;
+  otherLang: Lang;
+}
+
+const { lang, switchHref, otherLang } = Astro.props;
+const d = t(lang);
+---
+<footer class="site-footer">
+  <div class="wrap inner">
+    <span class="logo">Thailand Vibes</span>
+    <nav aria-label={d.footer.label}>
+      <a href="/de/impressum/" hreflang="de">{d.footer.imprint}</a>
+      <a href="/de/datenschutz/" hreflang="de">{d.footer.privacy}</a>
+      <a href={switchHref} hreflang={otherLang} lang={otherLang}>{d.nav.switchLanguage}</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--line); margin-top: clamp(40px, 6vw, 110px); }
+  .inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding-top: 28px; padding-bottom: 36px; font-size: 14px; }
+  .logo { font-family: var(--serif); font-style: italic; font-size: 20px; }
+  nav { display: flex; flex-wrap: wrap; gap: 20px; }
+  nav a { text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+</style>

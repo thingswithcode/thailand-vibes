@@ -5,3 +5,7 @@ dist/
 .DS_Store
 .env
 .wrangler/
+.claude/launch.json
+test-results/
+playwright-report/
+.lighthouse/

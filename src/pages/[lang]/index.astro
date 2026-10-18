@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n';
+import { isLang, langPaths } from '../../lib/urls';
+
+export function getStaticPaths() {
+  return langPaths();
+}
+
+const { lang } = Astro.params;
+if (!isLang(lang)) throw new Error(`Unknown language ${lang}`);
+const d = t(lang);
+---
+<BaseLayout lang={lang} path="">
+  <section class="wrap page-head">
+    <h1 class="page-title">{d.home.titleMain}{' '}<i>{d.home.titleAccent}</i></h1>
+  </section>
+</BaseLayout>

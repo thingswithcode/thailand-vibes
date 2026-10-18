@@ -1,0 +1,59 @@
+---
+import type { Lang, NavKey } from '../i18n/types';
+import { t } from '../i18n';
+import { pathFor } from '../lib/urls';
+
+interface Props {
+  lang: Lang;
+  current?: NavKey;
+  switchHref: string;
+  otherLang: Lang;
+}
+
+const { lang, current, switchHref, otherLang } = Astro.props;
+const d = t(lang);
+const links: { key: NavKey; href: string; label: string }[] = [
+  { key: 'destinations', href: pathFor(lang, 'destinations/'), label: d.nav.destinations },
+  { key: 'all-over-thailand', href: pathFor(lang, 'all-over-thailand/'), label: d.nav.allOverThailand },
+];
+---
+<header class="site-header wrap">
+  <a class="logo" href={pathFor(lang)} aria-label={d.nav.home}>Thailand Vibes</a>
+  <nav class="nav" id="site-nav" aria-label={d.nav.main} data-open="false">
+    <ul>
+      {links.map((link) => (
+        <li><a href={link.href} aria-current={current === link.key ? 'page' : undefined}>{link.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+  <div class="right">
+    <a class="lang" href={switchHref} hreflang={otherLang}>
+      <span aria-hidden="true"><b>{lang.toUpperCase()}</b>{' / '}{otherLang.toUpperCase()}</span>
+      <span class="visually-hidden" lang={otherLang}>{d.nav.switchLanguage}</span>
+    </a>
+    <button class="menu-btn" type="button" data-menu-button aria-controls="site-nav" aria-expanded="false" aria-label={d.nav.menu}>☰</button>
+  </div>
+</header>
+
+<script>
+  import { initMenu } from '../scripts/menu';
+  initMenu();
+</script>
+
+<style>
+  .site-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; position: relative; padding-top: clamp(14px, 1.6vw, 26px); padding-bottom: clamp(14px, 1.6vw, 26px); font-size: clamp(13px, 0.95vw, 16px); }
+  .logo { font-family: var(--serif); font-style: italic; font-size: clamp(20px, 1.6vw, 28px); text-decoration: none; }
+  .nav ul { display: flex; gap: clamp(16px, 2vw, 36px); list-style: none; margin: 0; padding: 0; }
+  .nav a { text-decoration: none; }
+  .nav a[aria-current='page'] { color: var(--red); }
+  .right { display: flex; align-items: center; gap: 14px; }
+  .lang { border: 1px solid var(--ink); border-radius: 99px; padding: 4px 12px; font-size: 0.85em; text-decoration: none; }
+  .lang b { color: var(--red); }
+  .menu-btn { display: none; background: none; border: 0; padding: 4px; font: inherit; font-size: 22px; line-height: 1; color: inherit; cursor: pointer; }
+  @media (max-width: 900px) {
+    .menu-btn { display: block; }
+    .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px var(--pad) 20px; }
+    .nav[data-open='true'] { display: block; }
+    .nav ul { flex-direction: column; gap: 14px; font-size: 18px; }
+  }
+</style>
