@@ -17,5 +17,10 @@ more:
   text: Das Octave direkt gegenüber, mit Live-DJ, abends wird daraus ein Open-Air-Club. Vertigo im Banyan Tree, edel und mit Aussicht aus dem 61. Stock. Pastel für Partystimmung, Shows und Gratis-Shots die ganze Nacht, Tanzen bis 1 Uhr.
 skip: "Die Sky Bar im Lebua, die aus Hangover: Die Aussicht ist gar nicht so besonders, es ist ziemlich tot, die Stimmung ist mau und die Drinks sind unverschämt teuer."
 featured: true
+photos:
+  - src: ../../../assets/photos/bangkok/tichuca-sunset.jpg
+    alt: "Sonnenuntergang über der Skyline vom Tichuca aus"
+  - src: ../../../assets/photos/bangkok/tichuca-terrace.jpg
+    alt: "Die Terrasse des Tichuca mit der quallenartigen Lichtinstallation"
 ---
 Vergiss die Rooftop-Bar aus dem Film Hangover und geh lieber hierhin. Das Tichuca hat eine richtig tolle Atmosphäre, gute Musik und liegt mitten in Sukhumvit. Die Aussicht ist unglaublich: Komm zum Sonnenuntergang und schau zu, wie die Sonne versinkt. Die Cocktails sind für Thailand etwas teurer, aber Aussicht und Stimmung sind es total wert.
