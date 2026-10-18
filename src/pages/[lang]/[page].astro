@@ -1,0 +1,48 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import { render } from 'astro:content';
+import type { NavKey } from '../../i18n/types';
+import { LANGS } from '../../i18n/types';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPages } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of LANGS) {
+    for (const page of await getPages(lang)) paths.push({ params: { lang, page: page.slug }, props: { lang, page } });
+  }
+  return paths;
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { lang, page } = Astro.props as Props;
+const data = page.entry.data;
+const { Content } = await render(page.entry);
+const navKeys: string[] = ['before-you-come', 'about'];
+const current = navKeys.includes(page.slug) ? (page.slug as NavKey) : undefined;
+---
+<BaseLayout lang={lang} path={`${page.slug}/`} title={data.title} description={data.description} onlyLangs={data.onlyLang ? [data.onlyLang] : LANGS} current={current}>
+  <section class="wrap page-head">
+    {data.label && <p class="label">{data.label}</p>}
+    <h1 class="page-title">{data.title}</h1>
+  </section>
+  {data.facts.length > 0 && (
+    <section class="wrap">
+      <dl class="facts">
+        {data.facts.map((fact) => (
+          <div><dt class="label">{fact.label}</dt><dd>{fact.value}</dd></div>
+        ))}
+      </dl>
+    </section>
+  )}
+  <section class="wrap prose"><Content /></section>
+</BaseLayout>
+
+<style>
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 0 0 clamp(30px, 4vw, 60px); }
+  .facts div { background: var(--card); border-radius: var(--radius); padding: 18px; }
+  .facts dd { margin: 6px 0 0; font-family: var(--serif); font-size: clamp(18px, 1.4vw, 24px); }
+  .prose { max-width: calc(72ch + 2 * var(--pad)); font-size: clamp(15px, 1.1vw, 18px); }
+  .prose :global(h2) { font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 1.8vw, 30px); margin: 1.6em 0 0.4em; }
+  .prose :global(p) { margin: 0 0 1em; }
+</style>

@@ -1,6 +1,7 @@
 ---
 import type { Lang, NavKey } from '../i18n/types';
 import { t } from '../i18n';
+import { getPages } from '../lib/content';
 import { pathFor } from '../lib/urls';
 
 interface Props {
@@ -12,9 +13,12 @@ interface Props {
 
 const { lang, current, switchHref, otherLang } = Astro.props;
 const d = t(lang);
+const pageSlugs = new Set((await getPages(lang)).map((page) => page.slug));
 const links: { key: NavKey; href: string; label: string }[] = [
   { key: 'destinations', href: pathFor(lang, 'destinations/'), label: d.nav.destinations },
   { key: 'all-over-thailand', href: pathFor(lang, 'all-over-thailand/'), label: d.nav.allOverThailand },
+  ...(pageSlugs.has('before-you-come') ? [{ key: 'before-you-come' as const, href: pathFor(lang, 'before-you-come/'), label: d.nav.beforeYouCome }] : []),
+  ...(pageSlugs.has('about') ? [{ key: 'about' as const, href: pathFor(lang, 'about/'), label: d.nav.about }] : []),
 ];
 ---
 <header class="site-header wrap">

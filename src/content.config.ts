@@ -1,7 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { CATEGORIES, CUISINES, REGIONS } from './i18n/types';
+import { CATEGORIES, CUISINES, LANGS, REGIONS } from './i18n/types';
 
 const coords = z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]);
 const fact = z.object({ label: z.string(), value: z.string() });
@@ -73,4 +73,15 @@ const skips = defineCollection({
   schema: z.object({ title: z.string(), order: z.number().int(), insteadTip: z.string().optional() }),
 });
 
-export const collections = { places, tips, restaurants, skips };
+const pages = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    label: z.string().optional(),
+    facts: z.array(fact).default([]),
+    onlyLang: z.enum(LANGS).optional(),
+  }),
+});
+
+export const collections = { places, tips, restaurants, skips, pages };

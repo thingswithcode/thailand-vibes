@@ -3,14 +3,14 @@ import type { Lang } from '../i18n/types';
 import { findContentProblems, invariantOf, type CheckItem } from './content-checks';
 import { splitId } from './ids';
 
-type Name = 'places' | 'tips' | 'restaurants' | 'skips';
+type Name = 'places' | 'tips' | 'restaurants' | 'skips' | 'pages';
 
 export interface Localized<C extends Name> {
   slug: string;
   entry: CollectionEntry<C>;
 }
 
-const NAMES: Name[] = ['places', 'tips', 'restaurants', 'skips'];
+const NAMES: Name[] = ['places', 'tips', 'restaurants', 'skips', 'pages'];
 const photoKey = (photo: unknown) => (photo as { src: { src: string } }).src.src;
 
 let validation: Promise<void> | undefined;
@@ -29,6 +29,7 @@ export function ensureContentValid(): Promise<void> {
           invariant: invariantOf(name, data, photoKey),
           placeRef: typeof data.place === 'string' ? data.place : undefined,
           tipRef: typeof data.insteadTip === 'string' ? data.insteadTip : undefined,
+          onlyLang: typeof data.onlyLang === 'string' ? data.onlyLang : undefined,
         });
       }
     }
@@ -91,4 +92,12 @@ export async function getPlaceOverview(
       return { place, tipCount: tips.length, featured: tips.filter((tip) => tip.entry.data.featured).slice(0, 4) };
     }),
   );
+}
+
+export async function getPages(lang: Lang): Promise<Localized<'pages'>[]> {
+  return localized('pages', lang);
+}
+
+export async function getPage(lang: Lang, slug: string): Promise<Localized<'pages'> | undefined> {
+  return (await getPages(lang)).find((page) => page.slug === slug);
 }
