@@ -30,7 +30,8 @@ export function anchorExists(distDir, url) {
   const hash = url.split('#')[1];
   if (!hash) return true;
   const file = targetFile(distDir, url);
-  return file !== null && readFileSync(file, 'utf8').includes(`id="${hash}"`);
+  const escaped = hash.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return file !== null && new RegExp(`\\sid="${escaped}"`).test(readFileSync(file, 'utf8'));
 }
 
 /** @param {string} text @returns {string[]} */

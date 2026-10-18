@@ -9,7 +9,7 @@ let dist = '';
 beforeAll(() => {
   dist = mkdtempSync(join(tmpdir(), 'tv-dist-'));
   mkdirSync(join(dist, 'en', 'destinations', 'bangkok'), { recursive: true });
-  writeFileSync(join(dist, 'en', 'destinations', 'bangkok', 'index.html'), '<article id="tip-bangkok-tichuca"></article>');
+  writeFileSync(join(dist, 'en', 'destinations', 'bangkok', 'index.html'), '<article id="tip-bangkok-tichuca" data-active-id="bangkok-tichuca"></article>');
   mkdirSync(join(dist, '_astro'));
   writeFileSync(join(dist, '_astro', 'a.webp'), '');
 });
@@ -31,6 +31,10 @@ describe('targetFile and anchorExists', () => {
   it('checks that the anchor exists on the target page', () => {
     expect(anchorExists(dist, '/en/destinations/bangkok/#tip-bangkok-tichuca')).toBe(true);
     expect(anchorExists(dist, '/en/destinations/bangkok/#tip-missing')).toBe(false);
+  });
+
+  it('does not mistake data attributes for ids', () => {
+    expect(anchorExists(dist, '/en/destinations/bangkok/#bangkok-tichuca')).toBe(false);
   });
 });
 

@@ -86,11 +86,26 @@ async function createMap(el: HTMLElement): Promise<void> {
   }
 
   let visible = new Set(pins.map((pin) => pin.id));
+  const applyFilter = (key: string) => {
+    visible = new Set(pins.filter((pin) => key === 'all' || pin.category === key).map((pin) => pin.id));
+    for (const [id, { marker }] of markers) {
+      if (visible.has(id)) marker.addTo(map);
+      else marker.remove();
+    }
+  };
+  const applyActive = (id: string | null) => {
+    for (const [pinId, { button }] of markers) button.classList.toggle('is-active', pinId === id);
+  };
   const fit = (animate: boolean) => {
     const bounds = boundsOf(pins.filter((pin) => visible.has(pin.id)).map((pin) => toLngLat(pin.coords)));
     if (!bounds) return;
     map.fitBounds(bounds, { padding: window.innerWidth < 600 ? 36 : 70, maxZoom: 13.5, duration: animate && smooth ? 700 : 0 });
   };
+
+  // The visitor may have filtered or scrolled before MapLibre finished loading: pick up that state from the page.
+  const root = el.closest('[data-filter-root]') ?? document;
+  applyFilter(root.querySelector<HTMLElement>('[data-filter-chip][aria-pressed="true"]')?.dataset.category ?? 'all');
+  applyActive(root.querySelector<HTMLElement>('[data-active-id].is-active')?.dataset.activeId ?? null);
 
   map.on('load', () => {
     for (const layer of map.getStyle().layers) {
@@ -104,17 +119,11 @@ async function createMap(el: HTMLElement): Promise<void> {
   fit(false);
 
   document.addEventListener('tv:filter', (event) => {
-    const key = (event as CustomEvent<{ key: string }>).detail.key;
-    visible = new Set(pins.filter((pin) => key === 'all' || pin.category === key).map((pin) => pin.id));
-    for (const [id, { marker }] of markers) {
-      if (visible.has(id)) marker.addTo(map);
-      else marker.remove();
-    }
+    applyFilter((event as CustomEvent<{ key: string }>).detail.key);
     fit(true);
   });
   document.addEventListener('tv:active', (event) => {
-    const id = (event as CustomEvent<{ id: string | null }>).detail.id;
-    for (const [pinId, { button }] of markers) button.classList.toggle('is-active', pinId === id);
+    applyActive((event as CustomEvent<{ id: string | null }>).detail.id);
   });
 
   el.dataset.mapReady = 'true';

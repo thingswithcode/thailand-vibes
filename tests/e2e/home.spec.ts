@@ -36,3 +36,11 @@ test('the German home page is German', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 2, name: 'Wohin die Reise geht' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Alle Tipps für ganz Thailand →' })).toHaveAttribute('href', '/de/all-over-thailand/');
 });
+
+test('labels on photo tiles sit on a darkened background', async ({ page }) => {
+  await page.goto('/en/');
+  const body = page.locator('.everywhere .tile.has-photo .tile-body').first();
+  const background = await body.evaluate((el) => getComputedStyle(el).backgroundImage);
+  expect(background).not.toMatch(/linear-gradient\((?:180deg, )?(?:transparent|rgba\(0, 0, 0, 0\))/);
+  await expect(page.locator('.everywhere .tile.has-photo .label').first()).not.toHaveCSS('text-shadow', 'none');
+});

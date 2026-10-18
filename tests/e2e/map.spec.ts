@@ -80,3 +80,13 @@ test('a pin names its visible number together with the tip', async ({ page }) =>
   await openMap(page);
   await expect(page.getByRole('button', { name: '10: Soi Cowboy', exact: true })).toHaveCount(1);
 });
+
+test('a filter chosen before the map has loaded still applies to the pins', async ({ page }) => {
+  const errors = collectPageErrors(page);
+  await page.goto(URL);
+  await page.getByRole('button', { name: /^Nightlife/ }).click();
+  await page.locator('[data-place-map]').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-place-map]')).toHaveAttribute('data-map-ready', 'true');
+  await expect(pins(page)).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
