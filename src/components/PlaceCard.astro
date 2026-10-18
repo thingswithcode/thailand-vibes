@@ -1,0 +1,56 @@
+---
+import { Picture } from 'astro:assets';
+import { t } from '../i18n';
+import type { Lang } from '../i18n/types';
+import type { Localized } from '../lib/content';
+import { pathFor } from '../lib/urls';
+
+interface Props {
+  lang: Lang;
+  place: Localized<'places'>;
+  tipCount: number;
+  featured: Localized<'tips'>[];
+}
+
+const { lang, place, tipCount, featured } = Astro.props;
+const d = t(lang);
+const placeUrl = pathFor(lang, `destinations/${place.slug}/`);
+const photo = featured.flatMap((tip) => tip.entry.data.photos)[0];
+---
+<article class:list={['place-card', { 'has-photo': photo }]} data-active-id={place.slug}>
+  <div>
+    <h3>{place.entry.data.name}</h3>
+    <p>{place.entry.data.summary}</p>
+    {featured.length > 0 && (
+      <ul class="rec">
+        {featured.map((tip) => (
+          <li><a href={`${placeUrl}#tip-${tip.slug}`}>{tip.entry.data.title}</a><span>{d.category[tip.entry.data.category]}</span></li>
+        ))}
+      </ul>
+    )}
+    {tipCount > 0 && <a class="go" href={placeUrl}>{d.place.allTips(tipCount)}</a>}
+  </div>
+  {photo && (
+    <div class="pic">
+      <Picture src={photo.src} alt={photo.alt} formats={['avif', 'webp']} widths={[400, 700, 1000]} sizes="(max-width: 900px) 90vw, 25vw" />
+    </div>
+  )}
+</article>
+
+<style>
+  .place-card { background: var(--card); border-radius: var(--radius); padding: clamp(20px, 2.2vw, 40px); margin-bottom: 16px; display: grid; gap: 18px; transition: box-shadow 0.35s; }
+  .place-card.has-photo { grid-template-columns: 1.1fr 1fr; }
+  h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(32px, 3.2vw, 60px); line-height: 1; margin: 6px 0 12px; letter-spacing: -0.01em; }
+  p { font-size: clamp(14px, 1.05vw, 17px); margin: 0 0 16px; }
+  .rec { list-style: none; padding: 0; margin: 0 0 18px; border-top: 1px solid var(--line); }
+  .rec li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: clamp(14px, 1vw, 16px); }
+  .rec a { text-decoration: none; }
+  .rec a:hover { text-decoration: underline; }
+  .rec span { color: var(--muted); font-size: 0.85em; white-space: nowrap; }
+  .go { font-weight: 600; color: var(--red); text-decoration: none; font-size: clamp(14px, 1vw, 16px); }
+  .pic :global(img) { display: block; width: 100%; height: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px; }
+  @media (max-width: 900px) {
+    .place-card.has-photo { grid-template-columns: 1fr; }
+    .pic :global(img) { aspect-ratio: 16 / 10; }
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+import { thailandShape } from '../lib/geo';
+
+interface Props {
+  places: { slug: string; name: string; coords: [number, number]; labelSide: 'left' | 'right' }[];
+  label: string;
+}
+
+const { places, label } = Astro.props;
+const shape = thailandShape();
+---
+<svg class="thailand-map" viewBox={`0 0 ${shape.width} ${shape.height}`} role="img" aria-label={label}>
+  <path class="land" d={shape.path} />
+  {places.map((place) => {
+    const [x, y] = shape.project(place.coords);
+    const left = place.labelSide === 'left';
+    return (
+      <g class="pin" data-pin-id={place.slug}>
+        <circle cx={x} cy={y} r="6" />
+        <text x={left ? x - 12 : x + 12} y={y + 4} text-anchor={left ? 'end' : 'start'}>{place.name}</text>
+      </g>
+    );
+  })}
+</svg>
+
+<style>
+  .thailand-map { height: 100%; width: auto; max-width: 100%; }
+  .land { fill: var(--sand); stroke: #cdbea5; stroke-width: 1.2; }
+  .pin circle { fill: var(--bg); stroke: var(--muted); stroke-width: 2; transition: fill 0.35s, stroke 0.35s, transform 0.35s; transform-box: fill-box; transform-origin: center; }
+  .pin text { font: 600 11px var(--sans); fill: var(--muted); transition: fill 0.35s; }
+  .pin.is-active circle { fill: var(--red); stroke: var(--red); transform: scale(1.35); }
+  .pin.is-active text { fill: var(--ink); }
+</style>

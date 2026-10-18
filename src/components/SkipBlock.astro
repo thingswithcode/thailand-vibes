@@ -1,0 +1,58 @@
+---
+import { render } from 'astro:content';
+import { t } from '../i18n';
+import type { Lang } from '../i18n/types';
+import { getSkips, getTip } from '../lib/content';
+import { pathFor } from '../lib/urls';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const skips = await Promise.all(
+  (await getSkips(lang)).map(async (skip) => {
+    const { Content } = await render(skip.entry);
+    const tip = skip.entry.data.insteadTip ? await getTip(lang, skip.entry.data.insteadTip) : undefined;
+    const instead = tip
+      ? { name: tip.entry.data.title, href: `${pathFor(lang, `destinations/${tip.entry.data.place}/`)}#tip-${tip.slug}` }
+      : undefined;
+    return { slug: skip.slug, title: skip.entry.data.title, Content, instead };
+  }),
+);
+---
+{skips.length > 0 && (
+  <section class="skip-block">
+    <div class="wrap inner">
+      <div>
+        <p class="label">{d.skip.label}</p>
+        <h2>{d.skip.titleStart}{' '}<i>{d.skip.titleAccent}</i></h2>
+      </div>
+      <div class="cards">
+        {skips.map(({ slug, title, Content, instead }) => (
+          <article class="skip-card" id={`skip-${slug}`}>
+            <h3>{title}</h3>
+            <div class="text"><Content /></div>
+            {instead && <a class="instead" href={instead.href}>{d.skip.instead(instead.name)}</a>}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .skip-block { background: var(--ink); color: var(--bg); }
+  .inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(20px, 4vw, 80px); align-items: center; padding-top: clamp(40px, 6vw, 110px); padding-bottom: clamp(40px, 6vw, 110px); }
+  .label { color: var(--skip); margin: 0; }
+  h2 { font-family: var(--serif); font-weight: 300; font-size: clamp(36px, 4.6vw, 88px); line-height: 1; margin: 12px 0 0; }
+  h2 i { color: var(--skip); }
+  .cards { display: grid; gap: 16px; }
+  .skip-card { background: rgb(242 235 221 / 0.07); border-radius: var(--radius); padding: clamp(20px, 2.2vw, 40px); }
+  h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 2.2vw, 40px); margin: 0 0 10px; text-decoration: line-through; text-decoration-color: var(--skip); text-decoration-thickness: 2px; }
+  .text { font-size: clamp(14px, 1.05vw, 17px); opacity: 0.92; }
+  .text :global(p) { margin: 0 0 12px; }
+  .instead { color: var(--skip); font-weight: 600; text-decoration: none; }
+  @media (max-width: 900px) { .inner { grid-template-columns: 1fr; } }
+</style>

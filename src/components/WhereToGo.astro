@@ -1,0 +1,55 @@
+---
+import { t } from '../i18n';
+import { REGIONS, type Lang } from '../i18n/types';
+import { getPlaceOverview } from '../lib/content';
+import PlaceCard from './PlaceCard.astro';
+import ThailandMap from './ThailandMap.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const overview = await getPlaceOverview(lang);
+const groups = REGIONS.map((region) => ({ region, items: overview.filter((o) => o.place.entry.data.region === region) })).filter((g) => g.items.length > 0);
+const mapPlaces = overview.map(({ place }) => ({
+  slug: place.slug,
+  name: place.entry.data.name,
+  coords: place.entry.data.coords,
+  labelSide: place.entry.data.mapLabelSide,
+}));
+---
+<div class="where" data-where>
+  <div class="map"><ThailandMap places={mapPlaces} label={d.destinations.mapLabel} /></div>
+  <div>
+    {groups.map((group) => (
+      <section class="group">
+        <p class="label">{d.regions[group.region]}</p>
+        {group.items.map((item) => <PlaceCard lang={lang} place={item.place} tipCount={item.tipCount} featured={item.featured} />)}
+      </section>
+    ))}
+  </div>
+</div>
+
+<script>
+  import { watchActive } from '../scripts/scroll-active';
+  document.querySelectorAll<HTMLElement>('[data-where]').forEach((root) => {
+    const cards = [...root.querySelectorAll<HTMLElement>('.place-card[data-active-id]')];
+    const pins = [...root.querySelectorAll<SVGGElement>('[data-pin-id]')];
+    watchActive(cards, (id) => {
+      for (const pin of pins) pin.classList.toggle('is-active', pin.dataset.pinId === id);
+    });
+  });
+</script>
+
+<style>
+  .where { display: grid; grid-template-columns: minmax(260px, 2fr) 3fr; gap: clamp(20px, 4vw, 70px); padding-bottom: clamp(40px, 6vw, 110px); }
+  .map { position: sticky; top: 24px; align-self: start; height: min(82vh, 860px); display: flex; align-items: center; justify-content: center; }
+  .group { margin-bottom: clamp(20px, 2.4vw, 40px); }
+  .group > .label { color: var(--muted); margin: 0 0 12px; }
+  @media (max-width: 900px) {
+    .where { grid-template-columns: 1fr; }
+    .map { position: relative; top: 0; height: 380px; }
+  }
+</style>

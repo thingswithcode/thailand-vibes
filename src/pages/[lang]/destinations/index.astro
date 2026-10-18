@@ -1,0 +1,24 @@
+---
+import SkipBlock from '../../../components/SkipBlock.astro';
+import WhereToGo from '../../../components/WhereToGo.astro';
+import { t } from '../../../i18n';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { isLang, langPaths } from '../../../lib/urls';
+
+export function getStaticPaths() {
+  return langPaths();
+}
+
+const { lang } = Astro.params;
+if (!isLang(lang)) throw new Error(`Unknown language ${lang}`);
+const d = t(lang);
+---
+<BaseLayout lang={lang} path="destinations/" title={d.destinations.label} description={d.destinations.lead} current="destinations">
+  <section class="wrap page-head">
+    <p class="label">{d.destinations.label}</p>
+    <h1 class="page-title">{d.destinations.title}</h1>
+    <p class="lead">{d.destinations.lead}</p>
+  </section>
+  <section class="wrap"><WhereToGo lang={lang} /></section>
+  <SkipBlock lang={lang} />
+</BaseLayout>
