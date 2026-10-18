@@ -5,17 +5,32 @@ import { boundsOf, labelField, toLngLat, type MapPin } from '../lib/map-helpers'
 import { reducedMotion } from './motion';
 
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/positron';
+const INTERACTIONS = ['pointermove', 'pointerdown', 'wheel', 'scroll', 'keydown', 'touchstart'] as const;
+
+// MapLibre blocks the main thread for about a second on phones, so the map waits until the visitor does something.
+function firstInteraction(): Promise<void> {
+  return new Promise((resolve) => {
+    const done = () => {
+      for (const type of INTERACTIONS) window.removeEventListener(type, done, true);
+      resolve();
+    };
+    for (const type of INTERACTIONS) window.addEventListener(type, done, { capture: true, passive: true });
+  });
+}
 
 export function initPlaceMaps(): void {
+  const interacted = firstInteraction();
   document.querySelectorAll<HTMLElement>('[data-place-map]').forEach((el) => {
     if (el.dataset.mapReady) return;
     el.dataset.mapReady = 'pending';
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
-      createMap(el).catch(() => {
-        el.dataset.mapReady = 'failed';
-      });
+      interacted
+        .then(() => createMap(el))
+        .catch(() => {
+          el.dataset.mapReady = 'failed';
+        });
     }, { rootMargin: '300px' });
     observer.observe(el);
   });
@@ -60,7 +75,7 @@ async function createMap(el: HTMLElement): Promise<void> {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'tv-pin';
-    button.setAttribute('aria-label', pin.title);
+    button.setAttribute('aria-label', `${pin.label}: ${pin.title}`);
     const label = document.createElement('span');
     label.textContent = pin.label;
     button.append(label);

@@ -51,6 +51,7 @@ const pins: MapPin[] = restaurants.flatMap((r, index) =>
   <div data-filter-root>
     <div class="bar"><div class="wrap"><FilterBar lang={lang} options={options} total={restaurants.length} /></div></div>
     <div class="wrap body">
+      <h2 class="visually-hidden">{d.food.label}</h2>
       <div class="list" id="restaurants" data-filter-list>
         {restaurants.map((restaurant, index) => <RestaurantCard lang={lang} restaurant={restaurant} index={index + 1} />)}
       </div>

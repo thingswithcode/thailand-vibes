@@ -16,6 +16,13 @@ for (const path of PAGES) {
     await expectNoHorizontalScroll(page);
   });
 
+  test(`${path} has a heading outline without gaps`, async ({ page }) => {
+    await page.goto(path);
+    const levels = await page.locator('h1, h2, h3, h4, h5, h6').evaluateAll((els) => els.map((el) => Number(el.tagName[1])));
+    const gaps = levels.filter((level, i) => i > 0 && level > levels[i - 1] + 1);
+    expect(gaps, `heading levels: ${levels.join(',')}`).toEqual([]);
+  });
+
   test(`${path} gives every image a text alternative`, async ({ page }) => {
     await page.goto(path);
     expect(await page.locator('img:not([alt])').count()).toBe(0);

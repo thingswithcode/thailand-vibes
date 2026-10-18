@@ -19,6 +19,9 @@ const d = t(lang);
     <h1 class="page-title">{d.destinations.title}</h1>
     <p class="lead">{d.destinations.lead}</p>
   </section>
-  <section class="wrap"><WhereToGo lang={lang} /></section>
+  <section class="wrap">
+    <h2 class="visually-hidden">{d.home.destinationsTitle}</h2>
+    <WhereToGo lang={lang} />
+  </section>
   <SkipBlock lang={lang} />
 </BaseLayout>

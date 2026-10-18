@@ -16,6 +16,7 @@ test('the street food tip leads to the food page', async ({ page }) => {
 
 test('restaurants with a known location get a pin', async ({ page }) => {
   await page.goto('/en/destinations/bangkok/food/');
+  await page.mouse.wheel(0, 200);
   await page.locator('[data-place-map]').scrollIntoViewIfNeeded();
   const withCoords = await page.locator('.restaurant[data-has-pin="true"]').count();
   expect(withCoords).toBeGreaterThanOrEqual(4);

@@ -8,10 +8,11 @@ interface Props {
   ratio?: string;
   position?: string;
   eager?: boolean;
+  priority?: boolean;
   sizes?: string;
 }
 
-const { src, alt, ratio = '4 / 5', position, eager = false, sizes = '(max-width: 900px) 92vw, 40vw' } = Astro.props;
+const { src, alt, ratio = '4 / 5', position, eager = false, priority = eager, sizes = '(max-width: 900px) 92vw, 40vw' } = Astro.props;
 ---
 <div class="arch" style={`--ratio: ${ratio}`}>
   <Picture
@@ -21,7 +22,7 @@ const { src, alt, ratio = '4 / 5', position, eager = false, sizes = '(max-width:
     widths={[480, 800, 1200, 1600]}
     sizes={sizes}
     loading={eager ? 'eager' : 'lazy'}
-    fetchpriority={eager ? 'high' : undefined}
+    fetchpriority={priority ? 'high' : undefined}
     style={position ? `object-position: ${position}` : undefined}
   />
 </div>

@@ -30,6 +30,7 @@ const featured = await getThailandTips(lang, true);
           position={photo.position}
           ratio={index === 1 ? '3 / 4' : '4 / 5'}
           eager
+          priority={index === 1}
           sizes="(max-width: 900px) 33vw, 30vw"
         />
       ))}

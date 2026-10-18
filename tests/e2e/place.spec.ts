@@ -64,3 +64,9 @@ test('on phones the chips scroll sideways, the page does not', async ({ page }, 
   expect(scrollable).toBe(true);
   await expectNoHorizontalScroll(page);
 });
+
+test('the count on the active chip keeps full contrast', async ({ page }) => {
+  await page.goto('/en/destinations/bangkok/');
+  const count = page.getByRole('button', { name: /^All/ }).locator('small');
+  await expect(count).toHaveCSS('opacity', '1');
+});

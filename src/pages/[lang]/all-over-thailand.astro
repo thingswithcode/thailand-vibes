@@ -20,5 +20,8 @@ const tips = await getThailandTips(lang);
     <h1 class="page-title">{d.everywhere.title}</h1>
     <p class="lead">{d.everywhere.lead}</p>
   </section>
-  <section class="wrap"><EverywhereTiles lang={lang} tips={tips} /></section>
+  <section class="wrap">
+    <h2 class="visually-hidden">{d.everywhere.label}</h2>
+    <EverywhereTiles lang={lang} tips={tips} />
+  </section>
 </BaseLayout>

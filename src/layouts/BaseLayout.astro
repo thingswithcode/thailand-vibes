@@ -3,6 +3,9 @@ import '@fontsource-variable/fraunces/opsz.css';
 import '@fontsource-variable/fraunces/opsz-italic.css';
 import '@fontsource-variable/inter';
 import '../styles/global.css';
+import frauncesItalicUrl from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-italic.woff2?url';
+import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
+import interUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { t } from '../i18n';
@@ -34,6 +37,9 @@ const site = Astro.site;
     <title>{fullTitle}</title>
     <meta name="description" content={description ?? d.meta.description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={frauncesItalicUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
     {noindex && <meta name="robots" content="noindex" />}
     {!noindex && site && <link rel="canonical" href={new URL(pathFor(lang, path), site).href} />}
     {!noindex && site && onlyLangs.map((l) => <link rel="alternate" hreflang={l} href={new URL(pathFor(l, path), site).href} />)}

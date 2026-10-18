@@ -6,6 +6,7 @@ const pins = (page: Page) => page.locator('[data-place-map] .tv-pin');
 
 async function openMap(page: Page) {
   await page.goto(URL);
+  await page.mouse.wheel(0, 200);
   await page.locator('[data-place-map]').scrollIntoViewIfNeeded();
 }
 
@@ -64,4 +65,18 @@ test('the page stays usable without WebGL', async ({ page }) => {
   await expect(page.locator('[data-place-map]')).toHaveAttribute('data-map-ready', 'failed');
   await expect(page.locator('#tips [data-filter-item]').first()).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test('the map waits for the first interaction so it does not slow down the first load', async ({ page }) => {
+  await page.goto(URL);
+  await page.waitForTimeout(1500);
+  await expect(page.locator('[data-place-map]')).toHaveAttribute('data-map-ready', 'pending');
+  await page.mouse.wheel(0, 200);
+  await page.locator('[data-place-map]').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-place-map]')).toHaveAttribute('data-map-ready', 'true');
+});
+
+test('a pin names its visible number together with the tip', async ({ page }) => {
+  await openMap(page);
+  await expect(page.getByRole('button', { name: '10: Soi Cowboy', exact: true })).toHaveCount(1);
 });
