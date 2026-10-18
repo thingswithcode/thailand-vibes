@@ -3,12 +3,14 @@ import type { InferGetStaticPropsType } from 'astro';
 import { render } from 'astro:content';
 import ArchPhoto from '../../../../components/ArchPhoto.astro';
 import FilterBar from '../../../../components/FilterBar.astro';
+import PlaceMap from '../../../../components/PlaceMap.astro';
 import TipCard from '../../../../components/TipCard.astro';
 import { t } from '../../../../i18n';
 import { CATEGORIES, LANGS } from '../../../../i18n/types';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { countOptions } from '../../../../lib/categories';
 import { getPlaces, getTips } from '../../../../lib/content';
+import { pinLabel, type MapPin } from '../../../../lib/map-helpers';
 import { pathFor } from '../../../../lib/urls';
 
 export async function getStaticPaths() {
@@ -28,6 +30,18 @@ const d = t(lang);
 const data = place.entry.data;
 const { Content: Intro } = await render(place.entry);
 const options = countOptions(tips.map((tip) => tip.entry.data.category), CATEGORIES, (c) => d.categories[c]);
+const pins: MapPin[] = tips.flatMap((tip, index) =>
+  tip.entry.data.coords
+    ? [{
+        id: tip.slug,
+        label: pinLabel(tip.entry.data.number, index + 1),
+        title: tip.entry.data.title,
+        category: tip.entry.data.category,
+        coords: tip.entry.data.coords,
+        anchor: `tip-${tip.slug}`,
+      }]
+    : [],
+);
 ---
 <BaseLayout lang={lang} path={`destinations/${place.slug}/`} title={data.name} description={data.summary} current="destinations">
   <section class="hero wrap">
@@ -46,6 +60,11 @@ const options = countOptions(tips.map((tip) => tip.entry.data.category), CATEGOR
       <div class="tips" id="tips" data-filter-list>
         {tips.map((tip) => <TipCard lang={lang} tip={tip} />)}
       </div>
+      {pins.length > 0 && (
+        <aside class="map-col">
+          <div class="map-wrap"><PlaceMap lang={lang} pins={pins} label={d.place.mapLabel} /></div>
+        </aside>
+      )}
     </div>
   </div>
 </BaseLayout>
@@ -66,10 +85,14 @@ const options = countOptions(tips.map((tip) => tip.entry.data.category), CATEGOR
   .intro { font-family: var(--serif); font-weight: 300; font-size: clamp(16px, 1.3vw, 22px); line-height: 1.55; max-width: 34ch; }
   .intro :global(p) { margin: 0; }
   .bar { position: sticky; top: 0; z-index: 500; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .body { padding-top: clamp(24px, 3vw, 50px); }
+  .body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 56px); padding-top: clamp(24px, 3vw, 50px); }
+  .map-wrap { position: sticky; top: 76px; height: calc(100vh - 100px); max-height: 860px; }
   .tips { scroll-margin-top: 90px; }
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; }
     .hero :global(.arch) { aspect-ratio: 1 / 1; }
+    .body { grid-template-columns: 1fr; }
+    .map-col { order: -1; }
+    .map-wrap { position: relative; top: 0; height: 340px; }
   }
 </style>
