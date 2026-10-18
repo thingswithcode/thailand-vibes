@@ -1,0 +1,41 @@
+---
+import { render } from 'astro:content';
+import { t } from '../i18n';
+import type { Lang } from '../i18n/types';
+import type { Localized } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+  restaurant: Localized<'restaurants'>;
+  index: number;
+}
+
+const { lang, restaurant, index } = Astro.props;
+const d = t(lang);
+const data = restaurant.entry.data;
+const { Content } = await render(restaurant.entry);
+const id = `restaurant-${restaurant.slug}`;
+---
+<article class="restaurant" id={id} data-filter-item data-category={data.cuisine} data-active-id={id} data-has-pin={String(Boolean(data.coords))}>
+  <div class="num" aria-hidden="true">{String(index).padStart(2, '0')}</div>
+  <div>
+    <p class="label">{d.cuisines[data.cuisine]}</p>
+    <h3>{data.name}</h3>
+    <div class="text"><Content /></div>
+    <dl class="facts"><dt>{d.food.price}</dt><dd>{data.price}</dd></dl>
+    <a class="btn" href={data.mapsUrl} target="_blank" rel="noopener">{d.place.openInMaps}</a>
+  </div>
+</article>
+
+<style>
+  .restaurant { background: var(--card); border-radius: var(--radius); padding: clamp(20px, 2.2vw, 40px); margin-bottom: 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(14px, 1.6vw, 28px); transition: box-shadow 0.3s; scroll-margin-top: 90px; }
+  .num { font-family: var(--serif); font-weight: 300; font-size: clamp(40px, 3.4vw, 64px); line-height: 0.9; color: var(--red); }
+  .label { margin: 0; }
+  h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(24px, 2.1vw, 40px); line-height: 1.05; margin: 8px 0 12px; }
+  .text { font-size: clamp(14px, 1.02vw, 17px); line-height: 1.65; }
+  .text :global(p) { margin: 0 0 14px; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: clamp(13px, 0.95vw, 15px); margin: 0 0 18px; }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; }
+  @media (max-width: 900px) { .restaurant { grid-template-columns: 1fr; } }
+</style>
