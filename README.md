@@ -27,4 +27,4 @@ Ein neuer Ort bekommt automatisch eine eigene Seite, sobald es den ersten Tipp d
 
 ## Veröffentlichen
 
-`npm run deploy` (prüft alles, bricht bei Platzhaltern im Impressum ab und lädt zu Cloudflare hoch).
+`npm run deploy` (prüft alles und lädt zu Cloudflare hoch).

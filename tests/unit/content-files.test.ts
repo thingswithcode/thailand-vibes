@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parse } from 'yaml';
 import { describe, expect, it } from 'vitest';
@@ -10,8 +10,9 @@ interface ContentFile { file: string; collection: CollectionName; lang: string; 
 
 function readAll(): ContentFile[] {
   const files: ContentFile[] = [];
-  for (const collection of readdirSync(ROOT) as CollectionName[]) {
-    for (const lang of readdirSync(join(ROOT, collection))) {
+  const dirs = (path: string) => readdirSync(path).filter((name) => !name.startsWith('.') && statSync(join(path, name)).isDirectory());
+  for (const collection of dirs(ROOT) as CollectionName[]) {
+    for (const lang of dirs(join(ROOT, collection))) {
       for (const name of readdirSync(join(ROOT, collection, lang)).filter((f) => f.endsWith('.md'))) {
         const file = join(ROOT, collection, lang, name);
         const text = readFileSync(file, 'utf8');

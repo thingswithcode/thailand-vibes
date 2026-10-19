@@ -9,7 +9,7 @@ export const en: Dict = {
     main: 'Main', destinations: 'Destinations', allOverThailand: 'All over Thailand', beforeYouCome: 'Before you come',
     about: 'About', menu: 'Menu', home: 'Thailand Vibes home', skipToContent: 'Skip to content', switchLanguage: 'Deutsch',
   },
-  footer: { label: 'Footer', imprint: 'Impressum', privacy: 'Datenschutz' },
+  footer: { label: 'Footer' },
   home: {
     kicker: 'Insider tips from Bangkok',
     titleMain: 'Thailand',

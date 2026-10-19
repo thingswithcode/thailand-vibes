@@ -7,7 +7,6 @@ const PAGES = [
   '/en/destinations/bangkok/', '/de/destinations/bangkok/',
   '/en/all-over-thailand/', '/de/all-over-thailand/',
   '/en/destinations/bangkok/food/', '/de/destinations/bangkok/food/',
-  '/de/impressum/', '/de/datenschutz/',
 ];
 
 for (const path of PAGES) {

@@ -21,7 +21,7 @@ export interface Dict {
     main: string; destinations: string; allOverThailand: string; beforeYouCome: string; about: string;
     menu: string; home: string; skipToContent: string; switchLanguage: string;
   };
-  footer: { label: string; imprint: string; privacy: string };
+  footer: { label: string };
   home: {
     kicker: string; titleMain: string; titleAccent: string;
     welcomeLabel: string; welcomeTitle: string; welcomeText: string;
