@@ -10,7 +10,9 @@ export interface Localized<C extends Name> {
   entry: CollectionEntry<C>;
 }
 
-const NAMES: Name[] = ['places', 'tips', 'restaurants', 'skips', 'pages'];
+// Text pages (before-you-come, about) are optional; asking Astro for an empty collection logs a warning on every page.
+const HAS_PAGES = Object.keys(import.meta.glob('../content/pages/**/*.md')).length > 0;
+const NAMES: Name[] = HAS_PAGES ? ['places', 'tips', 'restaurants', 'skips', 'pages'] : ['places', 'tips', 'restaurants', 'skips'];
 const photoKey = (photo: unknown) => (photo as { src: { src: string } }).src.src;
 
 let validation: Promise<void> | undefined;
@@ -95,7 +97,7 @@ export async function getPlaceOverview(
 }
 
 export async function getPages(lang: Lang): Promise<Localized<'pages'>[]> {
-  return localized('pages', lang);
+  return HAS_PAGES ? localized('pages', lang) : [];
 }
 
 export async function getPage(lang: Lang, slug: string): Promise<Localized<'pages'> | undefined> {

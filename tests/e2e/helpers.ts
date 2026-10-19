@@ -1,4 +1,8 @@
 import { expect, type Page } from '@playwright/test';
+import { BASE } from '../../site.config.mjs';
+
+// Absolute link targets as they appear in href attributes, e.g. href('en/') === '/thailand-vibes/en/'.
+export const href = (path: string): string => `${BASE}/${path}`;
 
 export function collectPageErrors(page: Page): string[] {
   const errors: string[] = [];

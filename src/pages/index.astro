@@ -1,4 +1,19 @@
 ---
-// Astro needs a root index for the i18n redirect to /en/; Cloudflare's _redirects (Task 12) redirects instantly.
-return Astro.redirect('/en/');
+// GitHub Pages cannot redirect on the server, so this page forwards to the English home page right away.
+import { pathFor } from '../lib/urls';
+
+const target = pathFor('en');
 ---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={new URL(target, Astro.site).href} />
+    <title>Thailand Vibes</title>
+  </head>
+  <body>
+    <a href={target}>Thailand Vibes</a>
+  </body>
+</html>

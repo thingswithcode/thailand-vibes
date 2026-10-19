@@ -15,6 +15,12 @@ export function extractInternalUrls(html) {
   return [...urls];
 }
 
+/** @param {string} url @param {string} base @returns {string | null} */
+export function stripBase(url, base) {
+  if (url === base || url.startsWith(`${base}/`)) return url.slice(base.length) || '/';
+  return null;
+}
+
 /** @param {string} distDir @param {string} url @returns {string | null} */
 export function targetFile(distDir, url) {
   const path = decodeURIComponent(url.split(/[?#]/)[0]);

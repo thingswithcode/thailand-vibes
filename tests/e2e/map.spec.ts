@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { collectPageErrors } from './helpers';
 
-const URL = '/en/destinations/bangkok/';
+const URL = 'en/destinations/bangkok/';
 const pins = (page: Page) => page.locator('[data-place-map] .tv-pin');
 
 async function openMap(page: Page) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isLang, langPaths, otherLang, pathFor } from '../../src/lib/urls';
+import { isLang, langPaths, otherLang, pathFor, withBase } from '../../src/lib/urls';
 
 describe('pathFor', () => {
   it('builds the home page of a language', () => {
@@ -27,5 +27,13 @@ describe('language helpers', () => {
 
   it('lists one static path per language', () => {
     expect(langPaths()).toEqual([{ params: { lang: 'en' } }, { params: { lang: 'de' } }]);
+  });
+});
+
+describe('withBase', () => {
+  it('puts the site sub folder in front of a path', () => {
+    expect(withBase('/thailand-vibes/', 'en/destinations/')).toBe('/thailand-vibes/en/destinations/');
+    expect(withBase('/thailand-vibes', '/en/')).toBe('/thailand-vibes/en/');
+    expect(withBase('/', 'en/')).toBe('/en/');
   });
 });

@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "verify": "npm run check && npm test && npm run build && node scripts/check-dist.mjs && npm run test:e2e",
-    "deploy": "npm run verify && node scripts/check-dist.mjs --strict && wrangler deploy"
+    "deploy": "bash scripts/deploy-pages.sh"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
@@ -35,7 +35,6 @@
     "sharp": "^0.35.5",
     "typescript": "^6.0.3",
     "vitest": "^5.0.5",
-    "wrangler": "^4.151.1",
     "yaml": "^2.9.1"
   }
 }

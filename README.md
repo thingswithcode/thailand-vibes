@@ -27,4 +27,4 @@ Ein neuer Ort bekommt automatisch eine eigene Seite, sobald es den ersten Tipp d
 
 ## Veröffentlichen
 
-`npm run deploy` (prüft alles und lädt zu Cloudflare hoch).
+`npm run deploy` prüft alles und veröffentlicht `dist/` auf dem Branch `gh-pages` von `thingswithcode/thailand-vibes`. Die Seite liegt dann unter https://thingswithcode.github.io/thailand-vibes/.

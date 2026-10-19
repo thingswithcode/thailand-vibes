@@ -1,11 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { pathFor } from '../lib/urls';
 ---
 <BaseLayout lang="en" path="" title="Page not found" onlyLangs={['en']} noindex>
   <section class="wrap page-head">
     <p class="label">404</p>
     <h1 class="page-title">Page not found</h1>
-    <p class="lead">This page does not exist (anymore). <a href="/en/">Back to the start</a></p>
-    <p class="lead" lang="de">Diese Seite gibt es nicht (mehr). <a href="/de/">Zurück zum Start</a></p>
+    <p class="lead">This page does not exist (anymore). <a href={pathFor('en')}>Back to the start</a></p>
+    <p class="lead" lang="de">Diese Seite gibt es nicht (mehr). <a href={pathFor('de')}>Zurück zum Start</a></p>
   </section>
 </BaseLayout>

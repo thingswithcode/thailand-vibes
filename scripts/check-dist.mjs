@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { anchorExists, extractInternalUrls, findPlaceholders, targetFile } from './lib/dist-check.mjs';
+import { BASE } from '../site.config.mjs';
+import { anchorExists, extractInternalUrls, findPlaceholders, stripBase, targetFile } from './lib/dist-check.mjs';
 
 const dist = 'dist';
 const strict = process.argv.includes('--strict');
@@ -18,8 +19,9 @@ for (const file of htmlFiles(dist)) {
   const html = readFileSync(file, 'utf8');
   const page = relative(dist, file);
   for (const url of extractInternalUrls(html)) {
-    if (targetFile(dist, url) === null) problems.push(`${page}: broken link ${url}`);
-    else if (!anchorExists(dist, url)) problems.push(`${page}: missing anchor ${url}`);
+    const local = stripBase(url, BASE);
+    if (local === null || targetFile(dist, local) === null) problems.push(`${page}: broken link ${url}`);
+    else if (!anchorExists(dist, local)) problems.push(`${page}: missing anchor ${url}`);
   }
   if (strict) for (const placeholder of findPlaceholders(html)) problems.push(`${page}: placeholder ${placeholder}`);
 }

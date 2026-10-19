@@ -1,10 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
-import { collectPageErrors, expectNoHorizontalScroll } from './helpers';
+import { collectPageErrors, expectNoHorizontalScroll, href } from './helpers';
 
 const tips = (page: Page) => page.locator('#tips [data-filter-item]');
 
 test('Bangkok shows all eleven tips in order', async ({ page }) => {
-  await page.goto('/en/destinations/bangkok/');
+  await page.goto('en/destinations/bangkok/');
   await expect(page.getByRole('heading', { level: 1, name: 'Bangkok' })).toBeVisible();
   await expect(tips(page)).toHaveCount(11);
   await expect(tips(page).first().getByRole('heading', { level: 3 })).toHaveText('Wat Paknam Phasi Charoen');
@@ -13,7 +13,7 @@ test('Bangkok shows all eleven tips in order', async ({ page }) => {
 
 test('the filter shows only the chosen category and can be reset', async ({ page }) => {
   const errors = collectPageErrors(page);
-  await page.goto('/en/destinations/bangkok/');
+  await page.goto('en/destinations/bangkok/');
   await page.getByRole('button', { name: /^Nightlife/ }).click();
   await expect(page.getByRole('button', { name: /^Nightlife/ })).toHaveAttribute('aria-pressed', 'true');
   await expect(tips(page).filter({ visible: true })).toHaveCount(2);
@@ -23,7 +23,7 @@ test('the filter shows only the chosen category and can be reset', async ({ page
 });
 
 test('the filter works with the keyboard alone', async ({ page }) => {
-  await page.goto('/en/destinations/bangkok/');
+  await page.goto('en/destinations/bangkok/');
   await page.getByRole('button', { name: /^Temples/ }).focus();
   await page.keyboard.press('Enter');
   await expect(tips(page).filter({ visible: true })).toHaveCount(1);
@@ -34,18 +34,18 @@ test('the filter works with the keyboard alone', async ({ page }) => {
 });
 
 test('the German page uses German labels and texts', async ({ page }) => {
-  await page.goto('/de/destinations/bangkok/');
+  await page.goto('de/destinations/bangkok/');
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
   await expect(page.getByRole('button', { name: /^Nachtleben/ })).toBeVisible();
   await expect(page.getByRole('heading', { level: 3, name: 'Steig in ein TukTuk' })).toBeVisible();
 });
 
 test('places without tips have no page', async ({ request }) => {
-  expect((await request.get('/en/destinations/koh-phangan/')).status()).toBe(404);
+  expect((await request.get('en/destinations/koh-phangan/')).status()).toBe(404);
 });
 
 test('maps buttons open the original Google Maps links in a new tab', async ({ page }) => {
-  await page.goto('/en/destinations/bangkok/');
+  await page.goto('en/destinations/bangkok/');
   const link = page.locator('#tip-bangkok-wat-paknam').getByRole('link', { name: 'Open in Google Maps ↗' });
   await expect(link).toHaveAttribute('href', 'https://maps.app.goo.gl/GZJXQkbFn25JmQFZA');
   await expect(link).toHaveAttribute('target', '_blank');
@@ -53,20 +53,20 @@ test('maps buttons open the original Google Maps links in a new tab', async ({ p
 });
 
 test('the street food tip links to the food page', async ({ page }) => {
-  await page.goto('/en/destinations/bangkok/');
-  await expect(page.getByRole('link', { name: 'My favorite restaurants in Bangkok →' })).toHaveAttribute('href', '/en/destinations/bangkok/food/');
+  await page.goto('en/destinations/bangkok/');
+  await expect(page.getByRole('link', { name: 'My favorite restaurants in Bangkok →' })).toHaveAttribute('href', href('en/destinations/bangkok/food/'));
 });
 
 test('on phones the chips scroll sideways, the page does not', async ({ page }, info) => {
   test.skip(info.project.name !== 'mobile', 'mobile only');
-  await page.goto('/de/destinations/bangkok/');
+  await page.goto('de/destinations/bangkok/');
   const scrollable = await page.locator('[data-filter-root] [role="group"]').evaluate((el) => el.scrollWidth > el.clientWidth);
   expect(scrollable).toBe(true);
   await expectNoHorizontalScroll(page);
 });
 
 test('the count on the active chip keeps full contrast', async ({ page }) => {
-  await page.goto('/en/destinations/bangkok/');
+  await page.goto('en/destinations/bangkok/');
   const count = page.getByRole('button', { name: /^All/ }).locator('small');
   await expect(count).toHaveCSS('opacity', '1');
 });

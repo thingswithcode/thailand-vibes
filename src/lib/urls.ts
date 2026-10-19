@@ -1,9 +1,14 @@
 import { LANGS, type Lang } from '../i18n/types';
 
+export function withBase(base: string, path: string): string {
+  const prefix = base.endsWith('/') ? base : `${base}/`;
+  return `${prefix}${path.replace(/^\/+/, '')}`;
+}
+
 export function pathFor(lang: Lang, path = ''): string {
   const clean = path.replace(/^\/+/, '');
-  if (clean === '') return `/${lang}/`;
-  return `/${lang}/${clean.endsWith('/') ? clean : `${clean}/`}`;
+  const local = clean === '' ? `${lang}/` : `${lang}/${clean.endsWith('/') ? clean : `${clean}/`}`;
+  return withBase(import.meta.env.BASE_URL ?? '/', local);
 }
 
 export function otherLang(lang: Lang): Lang {

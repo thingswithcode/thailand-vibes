@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { anchorExists, extractInternalUrls, findPlaceholders, targetFile } from '../../scripts/lib/dist-check.mjs';
+import { anchorExists, extractInternalUrls, findPlaceholders, stripBase, targetFile } from '../../scripts/lib/dist-check.mjs';
 
 let dist = '';
 
@@ -41,5 +41,16 @@ describe('targetFile and anchorExists', () => {
 describe('findPlaceholders', () => {
   it('finds bracketed capital placeholders only', () => {
     expect(findPlaceholders('Name: [VORNAME NACHNAME], Mail: [E-MAIL-ADRESSE], array[0], [Link]')).toEqual(['[VORNAME NACHNAME]', '[E-MAIL-ADRESSE]']);
+  });
+});
+
+describe('stripBase', () => {
+  it('maps a published url to its path inside dist', () => {
+    expect(stripBase('/thailand-vibes/en/', '/thailand-vibes')).toBe('/en/');
+    expect(stripBase('/thailand-vibes/_astro/a.webp', '/thailand-vibes')).toBe('/_astro/a.webp');
+  });
+
+  it('marks urls outside the sub folder as broken', () => {
+    expect(stripBase('/en/', '/thailand-vibes')).toBeNull();
   });
 });
