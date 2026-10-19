@@ -1,0 +1,1 @@
+import{t as e}from"./scroll-active.DdSPA4Dv.js";document.querySelectorAll(`[data-where]`).forEach(t=>{let n=[...t.querySelectorAll(`.place-card[data-active-id]`)],r=[...t.querySelectorAll(`[data-pin-id]`)];e(n,e=>{for(let t of r)t.classList.toggle(`is-active`,t.dataset.pinId===e)})});

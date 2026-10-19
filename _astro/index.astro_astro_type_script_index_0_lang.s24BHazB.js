@@ -1,0 +1,1 @@
+import{t as e}from"./scroll-active.DdSPA4Dv.js";e([...document.querySelectorAll(`#tips [data-active-id]`)],e=>{document.dispatchEvent(new CustomEvent(`tv:active`,{detail:{id:e}}))});
